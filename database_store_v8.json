@@ -1,0 +1,118 @@
+{
+  "donations": [
+    {
+      "signatureId": "DON-MY7V0JW0C",
+      "slipNo": "GEN-ACCOUNTS-1001",
+      "donorCode": "DONOR-ACCOUNTS-7001",
+      "name": "shahzaib",
+      "department": "Food/Ration",
+      "amount": 2000,
+      "category": "Zakat",
+      "payMode": "Cash",
+      "bankName": "-",
+      "bankTid": "-",
+      "date": "2026-06-29",
+      "remarks": "",
+      "allocatedStudents": []
+    },
+    {
+      "signatureId": "DON-P9NI8AYZ9",
+      "slipNo": "SPON-ACCOUNTS-5001",
+      "donorCode": "DONOR-ACCOUNTS-7002",
+      "name": "Anonymous Donor",
+      "department": "Kafalat",
+      "amount": 12000,
+      "category": "Kafalat Fixed",
+      "payMode": "Cash",
+      "bankName": "-",
+      "bankTid": "-",
+      "date": "2026-06-30",
+      "remarks": "",
+      "allocatedStudents": [
+        "STU-178280012680438",
+        "STU-178280013424551"
+      ]
+    }
+  ],
+  "expenses": [],
+  "students": [
+    {
+      "signatureId": "STU-178280012680438",
+      "name": "Shahzaib",
+      "class": "7",
+      "school": "",
+      "allottedDonorCode": "DONOR-ACCOUNTS-7002",
+      "allottedDonorName": ""
+    },
+    {
+      "signatureId": "STU-178280013424551",
+      "name": "Asad",
+      "class": "8",
+      "school": "",
+      "allottedDonorCode": "DONOR-ACCOUNTS-7002",
+      "allottedDonorName": ""
+    },
+    {
+      "signatureId": "STU-17828001399050",
+      "name": "Noor",
+      "class": "3",
+      "school": "",
+      "allottedDonorCode": null,
+      "allottedDonorName": null
+    }
+  ],
+  "users": [
+    {
+      "user": "accounts",
+      "pass": "admin123",
+      "role": "admin"
+    },
+    {
+      "user": "welfare1",
+      "pass": "user123",
+      "role": "user"
+    },
+    {
+      "user": "welfare2",
+      "pass": "user123",
+      "role": "user"
+    },
+    {
+      "user": "welfare3",
+      "pass": "user123",
+      "role": "user"
+    }
+  ],
+  "dynamicConfig": {
+    "departments": [
+      "Food/Ration",
+      "Clothes",
+      "General Fund",
+      "Kafalat",
+      "Makatib e Qurania",
+      "Medical Aid",
+      "Water Project",
+      "Emergency Relief",
+      "Education Support",
+      "Sadqa e Jaria"
+    ],
+    "categories": [
+      "Zakat",
+      "Sadqa",
+      "Atia",
+      "Kafalat Fixed"
+    ],
+    "expenseSources": [
+      "Cash Account",
+      "Bank Account",
+      "Petty Cash"
+    ],
+    "expenseAreas": [
+      "Karachi Central",
+      "Lyari",
+      "Orangi Town",
+      "Korangi",
+      "Malir"
+    ]
+  }
+}

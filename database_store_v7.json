@@ -1,0 +1,178 @@
+{
+  "donations": [
+    {
+      "signatureId": "DON-O4M1JII70",
+      "slipNo": "GEN-ACCOUNTS-1001",
+      "donorCode": "DONOR-ACCOUNTS-7001",
+      "name": "Shahzaib",
+      "department": "General Fund",
+      "amount": 2000,
+      "category": "Zakat",
+      "payMode": "Cash",
+      "bankName": "",
+      "bankTid": "",
+      "date": "2026-06-29",
+      "remarks": "",
+      "allocatedStudents": []
+    },
+    {
+      "signatureId": "DON-9EN2LFL1N",
+      "slipNo": "GEN-ACCOUNTS-1002",
+      "donorCode": "DONOR-ACCOUNTS-7001",
+      "name": "Shahzaib",
+      "department": "Food/Ration",
+      "amount": 2400,
+      "category": "Zakat",
+      "payMode": "Cash",
+      "bankName": "",
+      "bankTid": "",
+      "date": "2026-06-29",
+      "remarks": "",
+      "allocatedStudents": []
+    },
+    {
+      "signatureId": "DON-3CZP9O9XR",
+      "slipNo": "SPON-ACCOUNTS-5001",
+      "donorCode": "DONOR-ACCOUNTS-7002",
+      "name": "raheem",
+      "department": "Kafalat",
+      "amount": 6000,
+      "category": "Kafalat Fixed",
+      "payMode": "Cash",
+      "bankName": "",
+      "bankTid": "",
+      "date": "2026-06-29",
+      "remarks": "",
+      "allocatedStudents": [
+        "STU-178275673251035"
+      ]
+    },
+    {
+      "signatureId": "DON-BC9SK8S1U",
+      "slipNo": "SPON-ACCOUNTS-5002",
+      "donorCode": "DONOR-ACCOUNTS-7003",
+      "name": "talal",
+      "department": "Kafalat",
+      "amount": 18000,
+      "category": "Kafalat Fixed",
+      "payMode": "Bank",
+      "bankName": "meezan",
+      "bankTid": "221133",
+      "date": "",
+      "remarks": "",
+      "allocatedStudents": [
+        "STU-178275735247724",
+        "STU-178275736319555",
+        "STU-178275736975222"
+      ]
+    }
+  ],
+  "expenses": [
+    {
+      "signatureId": "EXP-VRDX2WJYS",
+      "title": "Food",
+      "description": "",
+      "department": "Food/Ration",
+      "area": "Karachi Central",
+      "source": "Cash Account",
+      "amount": 1000,
+      "date": "2026-06-29"
+    }
+  ],
+  "students": [
+    {
+      "signatureId": "STU-178275673251035",
+      "name": "Asad",
+      "class": "4",
+      "school": "",
+      "allottedDonorCode": "DONOR-ACCOUNTS-7002",
+      "allottedDonorName": "raheem"
+    },
+    {
+      "signatureId": "STU-178275735247724",
+      "name": "arham",
+      "class": "2",
+      "school": "",
+      "allottedDonorCode": "DONOR-ACCOUNTS-7003",
+      "allottedDonorName": "talal"
+    },
+    {
+      "signatureId": "STU-178275736319555",
+      "name": "faheem",
+      "class": "4",
+      "school": "",
+      "allottedDonorCode": "DONOR-ACCOUNTS-7003",
+      "allottedDonorName": "talal"
+    },
+    {
+      "signatureId": "STU-178275736975222",
+      "name": "noor",
+      "class": "",
+      "school": "",
+      "allottedDonorCode": "DONOR-ACCOUNTS-7003",
+      "allottedDonorName": "talal"
+    },
+    {
+      "signatureId": "STU-178275738092055",
+      "name": "rana",
+      "class": "",
+      "school": "",
+      "allottedDonorCode": null,
+      "allottedDonorName": null
+    }
+  ],
+  "users": [
+    {
+      "user": "accounts",
+      "pass": "admin123",
+      "role": "admin"
+    },
+    {
+      "user": "welfare1",
+      "pass": "user123",
+      "role": "user"
+    },
+    {
+      "user": "welfare2",
+      "pass": "user123",
+      "role": "user"
+    },
+    {
+      "user": "welfare3",
+      "pass": "user123",
+      "role": "user"
+    }
+  ],
+  "dynamicConfig": {
+    "departments": [
+      "Food/Ration",
+      "Clothes",
+      "General Fund",
+      "Kafalat",
+      "Makatib e Qurania",
+      "Medical Aid",
+      "Water Project",
+      "Emergency Relief",
+      "Education Support",
+      "Sadqa e Jaria"
+    ],
+    "categories": [
+      "Zakat",
+      "Sadqa",
+      "Atia",
+      "Kafalat Fixed"
+    ],
+    "expenseSources": [
+      "Cash Account",
+      "Bank Account",
+      "Petty Cash"
+    ],
+    "expenseAreas": [
+      "Karachi Central",
+      "Lyari",
+      "Orangi Town",
+      "Korangi",
+      "Malir"
+    ]
+  }
+}

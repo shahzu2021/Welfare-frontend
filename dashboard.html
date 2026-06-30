@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al-Khalil Welfare Trust ERP v8.0</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #f4f6f9; display: flex; min-height: 100vh; }
+        
+        .sidebar { width: 280px; background-color: #002244; color: white; height: 100vh; padding: 20px; position: fixed; left: 0; top: 0; display: flex; flex-direction: column; justify-content: space-between; }
+        .sidebar h2 { text-align: center; font-size: 20px; margin-bottom: 25px; border-bottom: 2px solid #0056b3; padding-bottom: 15px; color: #ffbc00; }
+        .nav-modules { display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
+        .tab-btn { width: 100%; background: none; border: none; color: #cbd5e1; padding: 12px 15px; text-align: left; font-size: 15px; cursor: pointer; border-radius: 6px; font-weight: 600; }
+        .tab-btn:hover, .tab-btn.active { background-color: #0056b3; color: white; }
+        
+        .main-workspace { margin-left: 280px; padding: 30px; width: calc(100% - 280px); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .grid-stats-7 { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid #0056b3; text-align: center; }
+        .stat-card h3 { font-size: 10px; color: #666; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-card p { font-size: 16px; font-weight: bold; color: #111; }
+
+        .charts-row-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .chart-box-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); height: 260px; }
+        .chart-box-card h4 { font-size: 13px; margin-bottom: 10px; color: #002244; }
+
+        .dashboard-split-row { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .scroll-panel-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .scroll-feed-container { height: 200px; overflow-y: auto; border: 1px solid #eef2f5; padding: 10px; border-radius: 6px; background: #fafbfc; }
+        .feed-row-item { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #eee; font-size: 13px; color: #333; }
+        
+        .form-card { background: white; padding: 25px; border-radius: 8px; max-width: 800px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .form-group { display: flex; flex-direction: column; position: relative; }
+        .form-group label { font-size: 13px; font-weight: bold; margin-bottom: 6px; color: #444; }
+        input, select, textarea { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; width: 100%; }
+        
+        .inline-select-container { display: flex; gap: 6px; width: 100%; }
+        .btn-inline-add { background: #2e7d32; color: white; border: none; width: 40px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+        
+        .autocomplete-box { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ccc; border-radius: 0 0 6px 6px; max-height: 150px; overflow-y: auto; z-index: 999; }
+        .suggestion-row { padding: 10px; cursor: pointer; font-size: 14px; }
+        .suggestion-row:hover { background: #f0f4f8; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: white; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+        th { background-color: #0056b3; color: white; font-weight: 600; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; background: #e8f5e9; color: #2e7d32; }
+        .students-checkbox-panel { max-height: 160px; overflow-y: auto; border: 1px solid #ccc; border-radius: 6px; padding: 10px; background: #fafafa; }
+        .checkbox-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 14px; }
+        button.btn-prime { padding: 12px 20px; background: #2e7d32; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 15px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 9999; }
+        .receipt-box { background: white; width: 380px; padding: 20px; border: 2px dashed #000; font-family: 'Courier New', Courier, monospace; }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div>
+            <h2>Al-Khalil Welfare</h2>
+            <div class="nav-modules">
+                <button class="tab-btn active" onclick="switchModuleTab('dashboard-mod', this)">📊 Dashboard Central</button>
+                <button class="tab-btn" onclick="switchModuleTab('donation-mod', this)">💰 Donation Slip Entry</button>
+                <button class="tab-btn" onclick="switchModuleTab('expense-mod', this)">📉 Expense Voucher</button>
+                <button class="tab-btn" onclick="switchModuleTab('kafalat-mod', this)">🎓 Kafalat Matrix</button>
+                <button class="tab-btn" onclick="switchModuleTab('donors-mod', this)">👥 Donors Master List</button>
+                <button class="tab-btn" onclick="switchModuleTab('reports-mod', this)">📋 10-Dept Ledger Sheets</button>
+                <button class="tab-btn" onclick="switchModuleTab('settings-mod', this)">⚙️ Config Settings</button>
+            </div>
+        </div>
+        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; text-align: center; font-size: 13px;">Node ID: <b style="color:#ffbc00;">ACCOUNTS</b></div>
+    </div>
+
+    <!-- MAIN WORKSPACE -->
+    <div class="main-workspace">
+
+        <!-- DASHBOARD MODULE -->
+        <div id="dashboard-mod" class="tab-content active">
+            <h2 style="margin-bottom:20px;">Welfare Trust Operation Desk Summary</h2>
+            
+            <div class="grid-stats-7">
+                <div class="stat-card" style="border-top-color:#10b981;"><h3>Total Income</h3><p id="boxTotalInc">0 PKR</p></div>
+                <div class="stat-card" style="border-top-color:#ef4444;"><h3>Total Expense</h3><p id="boxTotalExp">0 PKR</p></div>
+                <div class="stat-card" style="border-top-color:#059669;"><h3>Income (Cash)</h3><p id="boxIncCash">0 PKR</p></div>
+                <div class="stat-card" style="border-top-color:#2563eb;"><h3>Income (Bank)</h3><p id="boxIncBank">0 PKR</p></div>
+                <div class="stat-card" style="border-top-color:#8b5cf6;"><h3>Kids Assigned</h3><p id="boxStuAssigned">0</p></div>
+                <div class="stat-card" style="border-top-color:#ec4899;"><h3>Kids Not Assigned</h3><p id="boxStuUnassigned">0</p></div>
+                <div class="stat-card" style="border-top-color:#f59e0b;"><h3>Total Donors</h3><p id="boxTotalDonors">0</p></div>
+            </div>
+
+            <div class="charts-row-grid">
+                <div class="chart-box-card"><h4>📈 Monthly Income Flow Analytics</h4><div style="height:200px; position:relative;"><canvas id="chartIncome"></canvas></div></div>
+                <div class="chart-box-card"><h4>📉 Monthly Expense Voucher Flow</h4><div style="height:200px; position:relative;"><canvas id="chartExpense"></canvas></div></div>
+                <div class="chart-box-card"><h4>📍 Department Expense Distribution Audit</h4><div style="height:200px; position:relative;"><canvas id="chartDeptExp"></canvas></div></div>
+            </div>
+
+            <div class="dashboard-split-row">
+                <div>
+                    <h3 style="margin-bottom:10px; font-size:15px;">Departmental Net Balances</h3>
+                    <table>
+                        <thead><tr><th>Department Profile</th><th>Received</th><th>Spent</th><th>Net Balance</th></tr></thead>
+                        <tbody id="tblDashboardSummaryBody"></tbody>
+                    </table>
+                </div>
+                <div class="scroll-panel-card">
+                    <h4 style="color:#d32f2f; margin-bottom:10px;">⚠️ Pending Donors Alerts Feed</h4>
+                    <div class="scroll-feed-container" id="divPendingDonorsScrollBox"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DONATION ENTRY HUB -->
+        <div id="donation-mod" class="tab-content">
+            <h2>Donation Receipt Ingestion Portal</h2>
+            <div class="form-card" style="margin-top:20px;">
+                <form id="frmDonation">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Target Department</label>
+                            <div class="inline-select-container">
+                                <select id="donDept" onchange="syncKafalatCategory()"></select>
+                                <button type="button" class="btn-inline-add" onclick="addNewDynamicOption('departments', 'donDept')">+</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Receipt Category</label>
+                            <div class="inline-select-container">
+                                <select id="donCat" onchange="evaluateKafalatPanel()"></select>
+                                <button type="button" class="btn-inline-add" onclick="addNewDynamicOption('categories', 'donCat')">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="pnlKafalatAllocationGrid" style="display:none; background:#eff6ff; padding:15px; border-radius:6px; margin-bottom:15px; border:1px solid #bfdbfe;">
+                        <label style="font-weight:bold; color:#0056b3; display:block; margin-bottom:5px;">Link Free Students to Sponsor Profile:</label>
+						<div id="pnlKafalatMonthsGrid" style="display:none; background:#f0fdf4; padding:15px; border-radius:6px; margin-bottom:15px; border:1px solid #bbf7d0;">
+    <label style="font-weight:bold; color:#166534; display:block; margin-bottom:8px;">Sponsorship Period / Months (Select Multiple if Advance/Late):</label>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+        <label><input type="checkbox" class="cls-months-cb" value="Jan 2026"> Jan</label>
+        <label><input type="checkbox" class="cls-months-cb" value="Feb 2026"> Feb</label>
+        <label><input type="checkbox" class="cls-months-cb" value="Mar 2026"> Mar</label>
+        <label><input type="checkbox" class="cls-months-cb" value="Apr 2026"> Apr</label>
+        <label><input type="checkbox" class="cls-months-cb" value="May 2026"> May</label>
+        <label><input type="checkbox" class="cls-months-cb" value="Jun 2026"> Jun</label>
+        <label><input type="checkbox" class="cls-months-cb" value="Jul 2026"> Jul</label>
+        <label><input type="checkbox" class="cls-months-cb" value="Aug 2026"> Aug</label>
+        <label><input type="checkbox" class="cls-months-cb" value="Sep 2026"> Sep</label>
+        <label><input type="checkbox" class="cls-months-cb" value="Oct 2026"> Oct</label>
+        <label><input type="checkbox" class="cls-months-cb" value="Nov 2026"> Nov</label>
+        <label><input type="checkbox" class="cls-months-cb" value="Dec 2026"> Dec</label>
+    </div>
+</div>
+                        <div class="students-checkbox-panel" id="divStudentsCheckboxContainer"></div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Slip Mechanism</label><select id="slipMode" onchange="toggleManualSlipField()"><option value="Auto">Auto Counter</option><option value="Manual">Manual Serial</option></select></div>
+                        <div class="form-group" id="grpManualSlip" style="display:none;"><label>Manual Serial No</label><input type="text" id="manualSlipNo"></div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Donor Full Name</label>
+                            <input type="text" id="donName" oninput="executeDonorAutocompleteSearch(this.value)" autocomplete="off">
+                            <div id="divAutocompleteContainer" class="autocomplete-box" style="display:none;"></div>
+                        </div>
+                        <div class="form-group"><label>Donor Code</label><input type="text" id="donCodeDisplay" readonly></div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Payment Channel</label><select id="payMode" onchange="toggleBankDataFields()"><option value="Cash">Cash Wallet</option><option value="Bank">Bank Online</option></select></div>
+                        <div class="form-group classBankInput" style="display:none;"><label>Bank Institution Name</label><input type="text" id="bankName"></div>
+                        <div class="form-group classBankInput" style="display:none;"><label>Transaction ID (TID)</label><input type="text" id="bankTid"></div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Amount (PKR)</label><input type="number" id="donAmount" required></div>
+                        <div class="form-group"><label>Date</label><input type="date" id="donDate" required></div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:15px;"><label>Remarks (Type 'pending' to activate screen alert)</label><textarea id="donRemarks" rows="2"></textarea></div>
+                    <button type="button" class="btn-prime" style="width:100%;" onclick="saveDonationTransaction()">Commit & Print Locked Slip</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- EXPENSE VOUCHER OUTFLOW -->
+        <div id="expense-mod" class="tab-content">
+            <h2>Expense Outflow Matrix Entry Desk</h2>
+            <div class="form-card" style="margin-top:20px;">
+                <form id="frmExpense">
+                    <div class="form-grid">
+                        <div class="form-group"><label>Voucher Head / Title</label><input type="text" id="expTitle" required></div>
+                        <div class="form-group"><label>Debit Allocation Dept</label><select id="expDept"></select></div>
+                        <div class="form-group">
+                            <label>Area / Location</label>
+                            <div class="inline-select-container"><select id="expArea"></select><button type="button" class="btn-inline-add" onclick="addNewDynamicOption('expenseAreas', 'expArea')">+</button></div>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Payment Source Balance</label>
+                            <div class="inline-select-container"><select id="expSource"></select><button type="button" class="btn-inline-add" onclick="addNewDynamicOption('expenseSources', 'expSource')">+</button></div>
+                        </div>
+                        <div class="form-group"><label>Amount Spent (PKR)</label><input type="number" id="expAmount" required></div>
+                        <div class="form-group"><label>Execution Date</label><input type="date" id="expDate" required></div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:15px;"><label>Audit Notes / Desc</label><input type="text" id="expDesc"></div>
+                    <button type="button" class="btn-prime" style="background:#d32f2f; width:100%;" onclick="saveExpenseVoucher()">Commit Outflow</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- KAFALAT MATRIX -->
+        <div id="kafalat-mod" class="tab-content">
+            <h2>🎓 Kafalat Core Sponsorship Matrix</h2>
+            <div class="form-card" style="margin-top:20px;">
+                <h3>Register New Orphan / Student Profile</h3>
+                <form id="frmStudent" style="margin-top:15px;">
+                    <div class="form-grid">
+                        <div class="form-group"><label>Student Full Name</label><input type="text" id="stuName" required></div>
+                        <div class="form-group"><label>Class Level</label><input type="text" id="stuClass" required></div>
+                        <div class="form-group"><label>School Name Affiliation</label><input type="text" id="stuSchool" required></div>
+                    </div>
+                    <button type="button" class="btn-prime" onclick="commitStudentRegistration()">Lock Profile</button>
+                </form>
+            </div>
+            <table style="margin-top:20px;">
+                <thead><tr><th>Student Name</th><th>Class</th><th>School</th><th>Current Sponsor</th><th>Action</th></tr></thead>
+                <tbody id="tblStudentsStatusBody"></tbody>
+            </table>
+        </div>
+
+        <!-- DONORS SHEET LIST -->
+        <div id="donors-mod" class="tab-content">
+            <h2>👥 Donors Master Ledger Sheet</h2>
+            <table style="margin-top:20px;">
+                <thead><tr><th>Donor ID Code</th><th>Profile Name</th><th>Primary Dept</th><th>Category Type</th><th>Lifetime Contribution</th></tr></thead>
+                <tbody id="tblDonorsMasterBody"></tbody>
+            </table>
+        </div>
+
+        <!-- 10 DEPT REPORTS ENGINE STATEMENTS -->
+        <div id="reports-mod" class="tab-content">
+            <h2>📋 10-Department Statement Engine Ledger</h2>
+            <div class="form-card" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <label>Select Target Sheet Filters:</label>
+                    <select id="reportDeptFilter" style="width:300px; padding:10px;" onchange="buildFilteredAuditLedger()"></select>
+                </div>
+                <button class="btn-prime" style="background:#4b5563;" onclick="window.print()">🖨 Print Layout</button>
+            </div>
+            <div style="background:#002244; color:white; padding:20px; border-radius:8px; margin-bottom:20px; display:flex; justify-content:space-between;">
+                <h3>Active Department Node: <span id="lblReportDeptTitle" style="color:#ffbc00;">All Combined</span></h3>
+                <h3>Available Balance Framework: <span id="lblReportNetBalance" style="color:#34d399;">0 PKR</span></h3>
+            </div>
+            <table>
+                <thead><tr><th>Date</th><th>Ref / Voucher</th><th>Account Head Details</th><th>Department</th><th>Type</th><th>Income</th><th>Expense</th><th>Running Cumulative Total (Progress)</th></tr></thead>
+                <tbody id="tblAuditReportsEngineBody"></tbody>
+            </table>
+        </div>
+
+        <!-- CONFIGURATION LAYERS -->
+        <div id="settings-mod" class="tab-content">
+            <h2>⚙️ Dynamic Configuration Options Layer Setup</h2>
+            <div class="form-grid" style="margin-top:20px;">
+                <div style="background:white; padding:15px; border-radius:6px; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                    <h3>Add New Target Department Node</h3>
+                    <input type="text" id="newDept" style="margin: 10px 0;">
+                    <button class="btn-prime" onclick="saveConfigItem('departments', 'newDept')">+ Deploy Node Option</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- VOUCHER POPUP -->
+    <div id="receiptModal" class="modal">
+        <div class="receipt-box">
+            <h3 style="text-align: center; color:#002244;">AL KHALIL WELFARE</h3><hr style="margin:10px 0; border:1px dashed #000;">
+            <p><strong>Slip No:</strong> <span id="pSlipNo"></span></p>
+            <p><strong>Date:</strong> <span id="pDate"></span></p>
+            <p><strong>Donor Profile:</strong> <span id="pName"></span></p>
+            <p><strong>Department:</strong> <span id="pDept"></span></p>
+            <p><strong>Category:</strong> <span id="pCat"></span></p>
+            <p><strong>Channel Mode:</strong> <span id="pMode"></span></p><hr style="margin:10px 0; border:1px dashed #000;">
+            <p style="font-size:16px; font-weight:bold; text-align:center;">Amount: <span id="pAmount"></span> PKR</p>
+            <div style="margin-top:15px; display:flex; gap:10px;">
+                <button class="btn-prime" style="background:#0056b3; width:100%;" onclick="window.print()">Print</button>
+                <button class="btn-prime" style="background:#d32f2f; width:100%;" onclick="document.getElementById('receiptModal').style.display='none'; refreshSystemState();">Close Monitor</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DYNAMICALLY DETECT SERVER BASE URL - FIXED 0% DROPPED DATA REQUESTS
+        const BASE_HOST = window.location.origin;
+        const API_SERVER = `${BASE_HOST}/api`;
+
+        let sysDonorsIndex = [], sysStudentsIndex = [], sysDeptBalancesCached = {};
+        let chInc = null, chExp = null, chDept = null;
+
+        document.getElementById('donDate').valueAsDate = new Date();
+        document.getElementById('expDate').valueAsDate = new Date();
+
+        function switchModuleTab(targetId, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(targetId).classList.add('active');
+            btnElement.classList.add('active');
+            if(targetId === 'dashboard-mod') refreshSystemState();
+            if(targetId === 'donation-mod') syncDonationSubModules();
+            if(targetId === 'kafalat-mod') loadStudentsMatrixSubPanel();
+            if(targetId === 'donors-mod') loadDonorsMasterSheet();
+            if(targetId === 'reports-mod') buildFilteredAuditLedger();
+        }
+
+        function toggleManualSlipField() { document.getElementById('grpManualSlip').style.display = document.getElementById('slipMode').value === 'Manual' ? 'block' : 'none'; }
+        function toggleBankDataFields() { document.querySelectorAll('.classBankInput').forEach(el => el.style.display = document.getElementById('payMode').value === 'Bank' ? 'block' : 'none'); }
+
+        async function loadDropdownConfigurations() {
+            const res = await fetch(`${API_SERVER}/settings/config`);
+            const conf = await res.json();
+            populateSelectOptions('donDept', conf.departments);
+            populateSelectOptions('expDept', conf.departments);
+            populateSelectOptions('reportDeptFilter', ['All', ...conf.departments]);
+            populateSelectOptions('donCat', conf.categories);
+            populateSelectOptions('expArea', conf.expenseAreas);
+            populateSelectOptions('expSource', conf.expenseSources);
+        }
+
+        function populateSelectOptions(selectId, array) {
+            const dropdown = document.getElementById(selectId);
+            if(!dropdown) return; dropdown.innerHTML = '';
+            array.forEach(x => dropdown.innerHTML += `<option value="${x}">${x}</option>`);
+        }
+
+        async function addNewDynamicOption(type, selectId) {
+            const val = prompt("Naya value parameter enter karein:");
+            if(!val || val.trim() === "") return;
+            await fetch(`${API_SERVER}/settings/config/add`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ type, value: val.trim() }) });
+            await loadDropdownConfigurations();
+            document.getElementById(selectId).value = val.trim();
+        }
+
+        async function syncDonationSubModules() {
+            const res = await fetch(`${API_SERVER}/donors/master-list`);
+            sysDonorsIndex = (await res.json()).donors;
+            const resS = await fetch(`${API_SERVER}/students/list`);
+            sysStudentsIndex = (await resS.json()).students;
+
+            const grid = document.getElementById('divStudentsCheckboxContainer'); grid.innerHTML = '';
+            let freeKids = sysStudentsIndex.filter(s => !s.allottedDonorCode);
+            if(freeKids.length === 0) grid.innerHTML = '<p style="color:red; font-size:12px;">No unassigned students profile loaded.</p>';
+            else {
+                freeKids.forEach(k => { grid.innerHTML += `<div class="checkbox-row"><input type="checkbox" value="${k.signatureId}" class="cls-stu-cb" onchange="sumKafalatAllocationsAmount()"><span>${k.name} (Class ${k.class})</span></div>`; });
+            }
+        }
+
+        function executeDonorAutocompleteSearch(value) {
+            const container = document.getElementById('divAutocompleteContainer');
+            if(!value) { container.style.display = 'none'; return; }
+            let matches = sysDonorsIndex.filter(d => d.name.toLowerCase().includes(value.toLowerCase()));
+            if(matches.length === 0) { container.style.display = 'none'; return; }
+            container.innerHTML = ''; container.style.display = 'block';
+            matches.forEach(m => { container.innerHTML += `<div class="suggestion-row" onclick="injectSelectedDonorMap('${m.name}', '${m.code}')"><b>${m.name}</b> (${m.code})</div>`; });
+        }
+
+        function injectSelectedDonorMap(name, code) {
+            document.getElementById('donName').value = name;
+            document.getElementById('donCodeDisplay').value = code;
+            document.getElementById('divAutocompleteContainer').style.display = 'none';
+        }
+
+        function sumKafalatAllocationsAmount() {
+            let ticks = document.querySelectorAll('.cls-stu-cb:checked').length;
+            document.getElementById('donAmount').value = ticks * 6000;
+        }
+
+        function syncKafalatCategory() { if(document.getElementById('donDept').value === 'Kafalat') document.getElementById('donCat').value = 'Kafalat Fixed'; evaluateKafalatPanel(); }
+        function evaluateKafalatPanel() {
+            const state = document.getElementById('donCat').value === 'Kafalat Fixed';
+            document.getElementById('pnlKafalatAllocationGrid').style.display = state ? 'block' : 'none';
+            document.getElementById('donAmount').readOnly = state;
+            if(state) { document.getElementById('donDept').value = 'Kafalat'; sumKafalatAllocationsAmount(); } else { document.getElementById('donAmount').readOnly = false; }
+        }
+
+        async function saveDonationTransaction() {
+            let kidsIds = [];
+            if(document.getElementById('donCat').value === 'Kafalat Fixed') {
+                document.querySelectorAll('.cls-stu-cb:checked').forEach(c => kidsIds.push(c.value));
+            }
+            const payload = { nodeUser: 'ACCOUNTS', department: document.getElementById('donDept').value, category: document.getElementById('donCat').value, slipMode: document.getElementById('slipMode').value, manualSlipNo: document.getElementById('manualSlipNo').value, donorCode: document.getElementById('donCodeDisplay').value, donorName: document.getElementById('donName').value, payMode: document.getElementById('payMode').value, bankName: document.getElementById('bankName').value, bankTid: document.getElementById('bankTid').value, amount: document.getElementById('donAmount').value, date: document.getElementById('donDate').value, remarks: document.getElementById('donRemarks').value, allocatedStudents: kidsIds };
+            const res = await fetch(`${API_SERVER}/donations`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+            const r = await res.json();
+            if(r.success) {
+                document.getElementById('pSlipNo').innerText = r.data.slipNo; document.getElementById('pDate').innerText = r.data.date; document.getElementById('pName').innerText = r.data.name; document.getElementById('pDept').innerText = r.data.department; document.getElementById('pCat').innerText = r.data.category; document.getElementById('pMode').innerText = r.data.payMode; document.getElementById('pAmount').innerText = r.data.amount.toLocaleString();
+                document.getElementById('receiptModal').style.display = 'flex'; document.getElementById('frmDonation').reset(); document.getElementById('donCodeDisplay').value = ''; evaluateKafalatPanel(); syncDonationSubModules();
+            }
+        }
+
+        async function saveExpenseVoucher() {
+            const payload = { title: document.getElementById('expTitle').value, description: document.getElementById('expDesc').value, department: document.getElementById('expDept').value, area: document.getElementById('expArea').value, source: document.getElementById('expSource').value, amount: document.getElementById('expAmount').value, date: document.getElementById('expDate').value };
+            const res = await fetch(`${API_SERVER}/expenses`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+            if((await res.json()).success) { alert("Voucher Outflow Logged!"); document.getElementById('frmExpense').reset(); refreshSystemState(); }
+        }
+
+        async function loadStudentsMatrixSubPanel() {
+            const res = await fetch(`${API_SERVER}/students/list`);
+            const data = await res.json();
+            const body = document.getElementById('tblStudentsStatusBody'); body.innerHTML = '';
+            data.students.forEach(s => {
+                let status = s.allottedDonorName ? `<span style="color:green;font-weight:bold;">Linked: ${s.allottedDonorName}</span>` : '<span style="color:red;font-weight:bold;">🛑 Open Slot</span>';
+                let action = s.allottedDonorName ? `<button style="color:red; cursor:pointer;" onclick="disconnectStudentAllocation('${s.signatureId}')">Disconnect</button>` : `<em>Waiting Mapping</em>`;
+                body.innerHTML += `<tr><td><b>${s.name}</b></td><td>Class ${s.class}</td><td>${s.school}</td><td>${status}</td><td>${action}</td></tr>`;
+            });
+        }
+
+        async function commitStudentRegistration() {
+            const payload = { name: document.getElementById('stuName').value, class: document.getElementById('stuClass').value, school: document.getElementById('stuSchool').value };
+            await fetch(`${API_SERVER}/students`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+            alert("Orphan Profile Locked!"); document.getElementById('frmStudent').reset(); loadStudentsMatrixSubPanel();
+        }
+
+        async function disconnectStudentAllocation(id) {
+            await fetch(`${API_SERVER}/students/deallocate`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ studentId: id }) });
+            loadStudentsMatrixSubPanel();
+        }
+
+        async function loadDonorsMasterSheet() {
+            const res = await fetch(`${API_SERVER}/donors/master-list`);
+            const d = await res.json();
+            const body = document.getElementById('tblDonorsMasterBody'); body.innerHTML = '';
+            d.donors.forEach(x => { body.innerHTML += `<tr><td><b>${x.code}</b></td><td>${x.name}</td><td>${x.department}</td><td>${x.category}</td><td style="color:green;font-weight:bold;">${x.total.toLocaleString()} PKR</td></tr>`; });
+        }
+
+        async function buildFilteredAuditLedger() {
+            const filter = document.getElementById('reportDeptFilter').value;
+            document.getElementById('lblReportDeptTitle').innerText = filter === 'All' ? '10 Departments Combined' : filter;
+            let coreBalanceVal = sysDeptBalancesCached[filter] || 0;
+            if(filter === 'All') { let total = 0; Object.values(sysDeptBalancesCached).forEach(v => total += v); coreBalanceVal = total; }
+            document.getElementById('lblReportNetBalance').innerText = coreBalanceVal.toLocaleString() + " PKR";
+
+            const res = await fetch(`${API_SERVER}/reports/engine?dept=${filter}`);
+            const data = await res.json();
+            const body = document.getElementById('tblAuditReportsEngineBody'); body.innerHTML = '';
+            
+            let cumulativeProgressTotal = 0;
+            let sorted = data.records.reverse();
+            sorted.forEach(r => {
+                cumulativeProgressTotal += (r.income - r.expense);
+                body.innerHTML += `<tr><td>${r.date}</td><td><code>${r.ref}</code></td><td>${r.profile}</td><td>${r.dept}</td><td>${r.type}</td><td style="color:green;">${r.income > 0 ? r.income.toLocaleString() : '-'}</td><td style="color:red;">${r.expense > 0 ? r.expense.toLocaleString() : '-'}</td><td style="color:#002244; font-weight:bold; background:#fff9c4;">PKR ${cumulativeProgressTotal.toLocaleString()}</td></tr>`;
+            });
+        }
+
+        async function refreshSystemState() {
+            const res = await fetch(`${API_SERVER}/reports/summary`);
+            const result = await res.json();
+            if(result.success) {
+                const d = result.data;
+                document.getElementById('boxTotalInc').innerText = d.totalIncome.toLocaleString() + " PKR";
+                document.getElementById('boxTotalExp').innerText = d.totalExpense.toLocaleString() + " PKR";
+                document.getElementById('boxIncCash').innerText = d.incomeCash.toLocaleString() + " PKR";
+                document.getElementById('boxIncBank').innerText = d.incomeBank.toLocaleString() + " PKR";
+                document.getElementById('boxStuAssigned').innerText = d.assignedStudents;
+                document.getElementById('boxStuUnassigned').innerText = d.unassignedStudents;
+                document.getElementById('boxTotalDonors').innerText = d.totalDonors;
+
+                const tbody = document.getElementById('tblDashboardSummaryBody'); tbody.innerHTML = '';
+                sysDeptBalancesCached = {};
+                let expAmountsArray = [];
+                let expLabelsArray = [];
+
+                Object.keys(d.deptLedgerSummary).forEach(k => {
+                    let item = d.deptLedgerSummary[k]; sysDeptBalancesCached[k] = item.remaining;
+                    expLabelsArray.push(k); expAmountsArray.push(item.expense);
+                    let color = item.remaining >= 0 ? 'green' : 'red';
+                    tbody.innerHTML += `<tr><td><b>${k}</b></td><td style="color:green;">${item.income.toLocaleString()}</td><td style="color:red;">${item.expense.toLocaleString()}</td><td style="color:${color}; font-weight:bold;">${item.remaining.toLocaleString()} PKR</td></tr>`;
+                });
+
+                const scrollBox = document.getElementById('divPendingDonorsScrollBox'); scrollBox.innerHTML = '';
+                if(d.pendingDonorsFeed.length === 0) { scrollBox.innerHTML = '<div style="text-align:center;color:gray;font-size:12px;margin-top:20px;">No pending alerts live.</div>'; }
+                else {
+                    d.pendingDonorsFeed.forEach(p => { scrollBox.innerHTML += `<div class="suggestion-row" style="border-bottom:1px solid #eee;"><span>⚠️ <b>${p.name}</b></span> <span style="color:red;font-weight:bold;float:right;">${p.ref}</span></div>`; });
+                }
+
+                if(chInc) chInc.destroy();
+                chInc = new Chart(document.getElementById('chartIncome').getContext('2d'), { type: 'bar', data: { labels: ['Income Channels'], datasets: [{ label: 'Cash Wallet', data: [d.incomeCash], backgroundColor: '#059669' }, { label: 'Bank Wallet', data: [d.incomeBank], backgroundColor: '#2563eb' }] }, options: { responsive: true, maintainAspectRatio: false } });
+
+                if(chExp) chExp.destroy();
+                chExp = new Chart(document.getElementById('chartExpense').getContext('2d'), { type: 'line', data: { labels: ['Gross Execution footprint'], datasets: [{ label: 'Spent Ledger', data: [d.totalExpense], borderColor: '#d32f2f', fill: false }] }, options: { responsive: true, maintainAspectRatio: false } });
+
+                if(chDept) chDept.destroy();
+                chDept = new Chart(document.getElementById('chartDeptExp').getContext('2d'), { type: 'bar', data: { labels: expLabelsArray, datasets: [{ label: 'PKR Expended', data: expAmountsArray, backgroundColor: '#8b5cf6' }] }, options: { responsive: true, maintainAspectRatio: false } });
+            }
+        }
+
+        async function init() { await loadDropdownConfigurations(); refreshSystemState(); }
+        window.onload = init;
+    </script>
+</body>
+</html>
