@@ -11,7 +11,7 @@ app.use(express.static(__dirname));
 // ==========================================
 // 2. MONGODB CONNECTION SETTINGS
 // ==========================================
-const mongoURI = 'mongodb+srv://shahzu2021_db_user:Mcb@29216@cluster0.pumfhc5.mongodb.net/?appName=Cluster0';
+const mongoURI = 'mongodb+srv://shahzu2021_db_user:Mcb29216@cluster0.pumfhc5.mongodb.net/?appName=Cluster0';
 mongoose.connect(mongoURI)
   .then(() => console.log("--> Al Khalil Cloud Database Connected Successfully!"))
   .catch(err => console.error("Database Connection Error:", err));
